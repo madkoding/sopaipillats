@@ -4,8 +4,8 @@ const XSS_PATTERNS = [
   /<script[^>]*?>.*?<\/script>/gi,
   /\s+on\w+\s*=\s*["'][^"']*["']/gi,
   /\s+on\w+\s*=\s*[^\s>]+/gi,
-  /href\s*=\s*["']?\s*javascript:[^"'>\s]*/gi,
-  /src\s*=\s*["']?\s*data:[^"'>\s]*/gi,
+  /href\s*=\s*(["']?)javascript:[^"'>\s]*\1/gi,
+  /src\s*=\s*(["']?)data:[^"'>\s]*\1/gi,
   /<iframe|object|embed|applet|form|base[^>]*>/gi,
   /&#(\d+);/g,
 ];
@@ -52,7 +52,12 @@ export class Security {
     if (typeof value === 'string') {
       let sanitized = value;
       for (const pattern of XSS_PATTERNS) {
-        sanitized = sanitized.replace(pattern, '');
+      sanitized = sanitized.replace(pattern, (match) => {
+        if (match.startsWith('href')) {
+          return 'href=""';
+        }
+        return '';
+      });
       }
       return sanitized.trim();
     }

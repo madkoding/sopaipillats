@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import express, { Express, Request, Response, NextFunction } from 'express';
-import { Env, Router, ApiController, Get, Post, Put, Delete, Security, loadDatabaseConfig, AppDatabaseConfig, setRandomSeed } from '../dist/index.js';
+import { Env, Router, ApiController, Get, Post, Put, Patch, Delete, Security, loadDatabaseConfig, AppDatabaseConfig, setRandomSeed } from '../dist/index.js';
 
 const databaseConfig: AppDatabaseConfig = {
   default: Env.get('DB_CONNECTION', 'sqlite') || 'sqlite',
@@ -18,6 +18,37 @@ const databaseConfig: AppDatabaseConfig = {
 
 loadDatabaseConfig(databaseConfig);
 
+// Simple validation functions (instead of class-validator decorators)
+function validateCreateUser(data: any): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  if (!data.name || typeof data.name !== 'string' || data.name.length < 3) {
+    errors.push('name must be at least 3 characters');
+  }
+  if (!data.email || typeof data.email !== 'string' || !data.email.includes('@')) {
+    errors.push('email must be a valid email');
+  }
+  
+  return { valid: errors.length === 0, errors };
+}
+
+function validateUpdateUser(data: any): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  if (data.name !== undefined && (typeof data.name !== 'string' || data.name.length < 3)) {
+    errors.push('name must be at least 3 characters');
+  }
+  if (data.email !== undefined && (typeof data.email !== 'string' || !data.email.includes('@'))) {
+    errors.push('email must be a valid email');
+  }
+  
+  return { valid: errors.length === 0, errors };
+}
+
+// In-memory storage for demo
+let users: any[] = [];
+let nextId = 1;
+
 class AppController extends ApiController {
   @Get('/')
   index(_req: Request, res: Response): string {
@@ -33,6 +64,7 @@ class AppController extends ApiController {
       <h1>SopaipillaTS Application</h1>
       <ul>
         <li><a href="/api/health">API Health</a></li>
+        <li><a href="/api/users">GET /api/users</a></li>
       </ul>
     </body>
     </html>`;
@@ -45,6 +77,76 @@ class AppController extends ApiController {
       app: 'SopaipillaTS App',
       timestamp: new Date().toISOString(),
     });
+  }
+
+  @Get('/api/users')
+  getUsers(): any {
+    return this.json({ data: users, meta: { total: users.length } });
+  }
+
+  @Get('/api/users/:id')
+  getUser(req: Request): any {
+    const id = parseInt(req.params.id, 10);
+    const user = users.find(u => u.id === id);
+    return this.okOr404(user, 'User not found');
+  }
+
+  @Post('/api/users')
+  createUser(req: Request): any {
+    const validation = validateCreateUser(req.body);
+    
+    if (!validation.valid) {
+      return this.error(validation.errors.join(', '), 400);
+    }
+    
+    const user = { id: nextId++, ...req.body };
+    users.push(user);
+    return this.okOr201(user);
+  }
+
+  @Put('/api/users/:id')
+  updateUser(req: Request): any {
+    const id = parseInt(req.params.id, 10);
+    const index = users.findIndex(u => u.id === id);
+    
+    if (index === -1) {
+      return this.error('User not found', 404);
+    }
+
+    const validation = validateUpdateUser(req.body);
+    
+    if (!validation.valid) {
+      return this.error(validation.errors.join(', '), 400);
+    }
+
+    users[index] = { ...users[index], ...req.body };
+    return this.okOr201(users[index]);
+  }
+
+  @Patch('/api/users/:id')
+  patchUser(req: Request): any {
+    const id = parseInt(req.params.id, 10);
+    const index = users.findIndex(u => u.id === id);
+    
+    if (index === -1) {
+      return this.error('User not found', 404);
+    }
+
+    users[index] = { ...users[index], ...req.body };
+    return this.json({ data: users[index] });
+  }
+
+  @Delete('/api/users/:id')
+  deleteUser(req: Request): any {
+    const id = parseInt(req.params.id, 10);
+    const index = users.findIndex(u => u.id === id);
+    
+    if (index === -1) {
+      return this.error('User not found', 404);
+    }
+
+    users.splice(index, 1);
+    return this.json({ success: true, data: { deleted: true } });
   }
 }
 

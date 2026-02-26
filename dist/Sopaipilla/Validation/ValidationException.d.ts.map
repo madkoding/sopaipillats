@@ -1,0 +1,1 @@
+{"version":3,"file":"ValidationException.d.ts","sourceRoot":"","sources":["../../../src/Sopaipilla/Validation/ValidationException.ts"],"names":[],"mappings":"AAAA,qBAAa,mBAAoB,SAAQ,KAAK;IACzB,MAAM,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,EAAE,CAAC;gBAAhC,MAAM,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,EAAE,CAAC;CAIpD"}

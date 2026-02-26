@@ -1,10 +1,10 @@
 import { getConnection } from './Connection.js';
 export class Model {
-    static table = '';
-    static primaryKey = 'id';
-    static connection = '';
-    static fillable = [];
-    static schema = [];
+    static { this.table = ''; }
+    static { this.primaryKey = 'id'; }
+    static { this.connection = ''; }
+    static { this.fillable = []; }
+    static { this.schema = []; }
     static get tableName() {
         if (this.table) {
             return this.table;

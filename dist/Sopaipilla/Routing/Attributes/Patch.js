@@ -1,8 +1,8 @@
-import { setRouteMetadata } from './RouteConfig.js';
+import 'reflect-metadata';
+import { setRouteOnMethod } from './Get.js';
 export function Patch(path) {
-    return (target, propertyKey, descriptor) => {
-        const config = { path, method: 'PATCH' };
-        setRouteMetadata(target, propertyKey, config);
+    return (target, _propertyKey, descriptor) => {
+        setRouteOnMethod(target, { path, method: 'PATCH' });
         return descriptor;
     };
 }

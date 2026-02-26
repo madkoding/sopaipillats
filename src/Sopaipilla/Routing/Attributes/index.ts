@@ -1,4 +1,4 @@
-export { Get } from './Get.js';
+export { Get, getRouteFromMethod } from './Get.js';
 export { Post } from './Post.js';
 export { Put } from './Put.js';
 export { Patch } from './Patch.js';

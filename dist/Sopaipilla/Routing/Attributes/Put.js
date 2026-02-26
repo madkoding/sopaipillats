@@ -1,8 +1,8 @@
-import { setRouteMetadata } from './RouteConfig.js';
+import 'reflect-metadata';
+import { setRouteOnMethod } from './Get.js';
 export function Put(path) {
-    return (target, propertyKey, descriptor) => {
-        const config = { path, method: 'PUT' };
-        setRouteMetadata(target, propertyKey, config);
+    return (target, _propertyKey, descriptor) => {
+        setRouteOnMethod(target, { path, method: 'PUT' });
         return descriptor;
     };
 }

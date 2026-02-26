@@ -1,16 +1,16 @@
 import { Router as ExpressRouter } from 'express';
-import { getRouteMetadata } from './Attributes/index.js';
+import { getRouteFromMethod } from './Attributes/index.js';
 export class Router {
-    expressRouter;
-    routes = new Map();
     constructor() {
+        this.routes = new Map();
         this.expressRouter = ExpressRouter();
     }
     registerController(controller) {
-        const prototype = Object.getPrototypeOf(controller);
-        const methodNames = Object.getOwnPropertyNames(prototype).filter((name) => name !== 'constructor' && typeof prototype[name] === 'function');
+        const Constructor = controller.constructor;
+        const methodNames = Object.getOwnPropertyNames(Constructor.prototype).filter((name) => name !== 'constructor' && typeof Constructor.prototype[name] === 'function');
         for (const methodName of methodNames) {
-            const routeConfig = getRouteMetadata(prototype, methodName);
+            const methodFn = Constructor.prototype[methodName];
+            const routeConfig = getRouteFromMethod(methodFn);
             if (routeConfig) {
                 const routeKey = `${routeConfig.method}:${routeConfig.path}`;
                 if (!this.routes.has(routeKey)) {

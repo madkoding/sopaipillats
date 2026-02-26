@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 export class ApiController {
-    static allowedOrigin = '*';
+    static { this.allowedOrigin = '*'; }
     constructor() {
         this.sendSecurityHeaders();
     }

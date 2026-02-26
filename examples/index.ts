@@ -48,7 +48,7 @@ class AppController extends ApiController {
   }
 }
 
-export class Application {
+class Application {
   private app: Express;
   private router: Router;
 
@@ -97,3 +97,8 @@ export function initEnv(path: string = '.env'): void {
     setRandomSeed(randomSeed);
   }
 }
+
+// Start the application
+const application = new Application();
+application.registerController(new AppController());
+application.start();

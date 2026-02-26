@@ -3,12 +3,10 @@ const SESSION_STORE = new Map();
 const SESSION_COOKIE_NAME = 'sopaipilla_sid';
 const DEFAULT_MAX_AGE = 24 * 60 * 60 * 1000;
 export class Session {
-    req;
-    res;
-    sessionId = null;
-    data = {};
-    dirty = false;
     constructor(req, res) {
+        this.sessionId = null;
+        this.data = {};
+        this.dirty = false;
         this.req = req;
         this.res = res;
         this.init();

@@ -2,7 +2,7 @@ import { config as loadDotenv } from 'dotenv';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 export class Env {
-    static vars = {};
+    static { this.vars = {}; }
     static load(path = '.env') {
         const fullPath = resolve(path);
         if (!existsSync(fullPath)) {

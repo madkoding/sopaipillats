@@ -1,1 +1,1 @@
-{"version":3,"file":"Put.d.ts","sourceRoot":"","sources":["../../../../src/Sopaipilla/Routing/Attributes/Put.ts"],"names":[],"mappings":"AAEA,wBAAgB,GAAG,CAAC,IAAI,EAAE,MAAM,GAAG,eAAe,CAMjD"}
+{"version":3,"file":"Put.d.ts","sourceRoot":"","sources":["../../../../src/Sopaipilla/Routing/Attributes/Put.ts"],"names":[],"mappings":"AAAA,OAAO,kBAAkB,CAAC;AAG1B,wBAAgB,GAAG,CAAC,IAAI,EAAE,MAAM,GAAG,eAAe,CAKjD"}

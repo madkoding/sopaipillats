@@ -279,3 +279,6 @@ DB_PASSWORD=
 ## License
 
 MIT © [madKoding](https://github.com/madkoding)
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=madkoding/sopaipillats&type=Date)](https://star-history.com/#madkoding/sopaipillats&Date)

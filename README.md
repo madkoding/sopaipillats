@@ -18,10 +18,10 @@
 
 ## Requirements
 
-| Requirement | Version |
-|---|---|
-| Node.js | 18 or higher |
-| npm | 9 or higher |
+| Requirement | Version      |
+| ----------- | ------------ |
+| Node.js     | 18 or higher |
+| npm         | 9 or higher  |
 
 ---
 
@@ -88,16 +88,16 @@ Visit `http://localhost:3000/api/health` to confirm the app is running.
 
 ```typescript
 // App/Posts/PostsModel.ts
-import { Model } from 'sopaipilla';
+import { Model } from "sopaipilla";
 
 export class PostsModel extends Model {
-  protected static table = 'posts';
-  protected static primaryKey = 'id';
-  protected static fillable = ['title', 'body'];
+  protected static table = "posts";
+  protected static primaryKey = "id";
+  protected static fillable = ["title", "body"];
   protected static schema = [
-    'id INTEGER PRIMARY KEY AUTOINCREMENT',
-    'title TEXT NOT NULL',
-    'body TEXT',
+    "id INTEGER PRIMARY KEY AUTOINCREMENT",
+    "title TEXT NOT NULL",
+    "body TEXT",
   ];
 }
 ```
@@ -106,7 +106,7 @@ export class PostsModel extends Model {
 
 ```typescript
 // App/Posts/DTO/CreatePostDTO.ts
-import { IsString, MinLength, MaxLength } from 'sopaipilla';
+import { IsString, MinLength, MaxLength } from "sopaipilla";
 
 export class CreatePostDTO {
   @IsString()
@@ -123,11 +123,11 @@ export class CreatePostDTO {
 
 ```typescript
 // App/Posts/PostsController.ts
-import { Request, Response } from 'express';
-import { ApiController } from 'sopaipilla';
-import { Get, Post, Delete } from 'sopaipilla';
-import { PostsModel } from './PostsModel';
-import { CreatePostDTO } from './DTO/CreatePostDTO';
+import { Request, Response } from "express";
+import { ApiController } from "sopaipilla";
+import { Get, Post, Delete } from "sopaipilla";
+import { PostsModel } from "./PostsModel";
+import { CreatePostDTO } from "./DTO/CreatePostDTO";
 
 export class PostsController extends ApiController {
   constructor() {
@@ -135,13 +135,13 @@ export class PostsController extends ApiController {
     PostsModel.migrate();
   }
 
-  @Get('/api/posts')
+  @Get("/api/posts")
   async index() {
     const data = await PostsModel.all();
     return this.json({ data, meta: { total: data.length } });
   }
 
-  @Post('/api/posts')
+  @Post("/api/posts")
   async store(req: Request) {
     return this.withDto(CreatePostDTO, req, async (dto) => {
       const post = await PostsModel.create(dto);
@@ -149,13 +149,13 @@ export class PostsController extends ApiController {
     });
   }
 
-  @Delete('/api/posts/:id')
+  @Delete("/api/posts/:id")
   async destroy(req: Request) {
     const id = parseInt(req.params.id, 10);
     const deleted = await PostsModel.delete(id);
     return deleted
       ? { success: true, data: { deleted: true } }
-      : this.error('Post not found', 404);
+      : this.error("Post not found", 404);
   }
 }
 ```
@@ -164,9 +164,9 @@ export class PostsController extends ApiController {
 
 ```typescript
 // src/index.ts
-import { createApp, initEnv } from './index.js';
-import { AppController } from './App/AppController.js';
-import { UsersController } from './App/Users/UsersController.js';
+import { createApp, initEnv } from "./index.js";
+import { AppController } from "./App/AppController.js";
+import { UsersController } from "./App/Users/UsersController.js";
 
 initEnv();
 
@@ -180,14 +180,14 @@ app.start();
 
 ## ApiController Helpers
 
-| Method | Description |
-|---|---|
-| `$this->json(data, status)` | JSON response with success: true |
-| `$this->error(message, status)` | JSON error response |
-| `$this->okOr201(data)` | 201 Created or 500 on falsy |
-| `$this->okOr404(data, msg)` | 200 OK or 404 Not Found on falsy |
+| Method                                    | Description                                   |
+| ----------------------------------------- | --------------------------------------------- |
+| `$this->json(data, status)`               | JSON response with success: true              |
+| `$this->error(message, status)`           | JSON error response                           |
+| `$this->okOr201(data)`                    | 201 Created or 500 on falsy                   |
+| `$this->okOr404(data, msg)`               | 200 OK or 404 Not Found on falsy              |
 | `$this->withDto(dtoClass, req, callback)` | Validate input via DTO, then execute callback |
-| `$this->validationError(errors)` | 422 response with validation errors |
+| `$this->validationError(errors)`          | 422 response with validation errors           |
 
 ---
 
@@ -219,42 +219,44 @@ async show(req: Request) {
 
 Using class-validator decorators:
 
-| Decorator | Description |
-|---|---|
-| `@IsString()` | Must be a string |
-| `@IsEmail()` | Must be a valid email |
-| `@MinLength(n)` | Minimum string length |
-| `@MaxLength(n)` | Maximum string length |
-| `@IsInt()` | Must be an integer |
-| `@IsPositive()` | Must be a positive number |
+| Decorator           | Description                       |
+| ------------------- | --------------------------------- |
+| `@IsString()`       | Must be a string                  |
+| `@IsEmail()`        | Must be a valid email             |
+| `@MinLength(n)`     | Minimum string length             |
+| `@MaxLength(n)`     | Maximum string length             |
+| `@IsInt()`          | Must be an integer                |
+| `@IsPositive()`     | Must be a positive number         |
 | `@IsIn(['a', 'b'])` | Must be one of the allowed values |
-| `@IsOptional()` | Field is optional |
+| `@IsOptional()`     | Field is optional                 |
 
 ---
 
 ## Security
 
-| Layer | Implementation |
-|---|---|
-| Input sanitization | XSS patterns stripped from request body |
-| HTTP method whitelist | TRACE, CONNECT and custom methods return 405 |
-| Session cookies | httponly, samesite=Lax, secure (when HTTPS) |
+| Layer                 | Implementation                                                |
+| --------------------- | ------------------------------------------------------------- |
+| Input sanitization    | XSS patterns stripped from request body                       |
+| HTTP method whitelist | TRACE, CONNECT and custom methods return 405                  |
+| Session cookies       | httponly, samesite=Lax, secure (when HTTPS)                   |
 | HTTP security headers | X-Content-Type-Options, X-Frame-Options, CSP, Referrer-Policy |
-| Encryption | AES-256-GCM (authenticated) |
-| Password hashing | bcrypt |
-| Token generation | randomBytes (CSPRNG) |
+| Encryption            | AES-256-GCM (authenticated)                                   |
+| Password hashing      | bcrypt                                                        |
+| Token generation      | randomBytes (CSPRNG)                                          |
 
 ---
 
 ## Database Support
 
 ### SQLite
+
 ```env
 DB_CONNECTION=sqlite
 DB_DATABASE=:memory:
 ```
 
 ### MySQL
+
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -265,6 +267,7 @@ DB_PASSWORD=
 ```
 
 ### PostgreSQL
+
 ```env
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
@@ -279,6 +282,7 @@ DB_PASSWORD=
 ## License
 
 MIT © [madKoding](https://github.com/madkoding)
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=madkoding/sopaipillats&type=Date)](https://star-history.com/#madkoding/sopaipillats&Date)

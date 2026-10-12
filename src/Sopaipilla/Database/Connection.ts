@@ -1,7 +1,7 @@
-import knex, { Knex } from 'knex';
+import knex, { Knex } from "knex";
 
 export interface DatabaseConfig {
-  client: 'pg' | 'mysql2' | 'better-sqlite3' | 'sqlite3';
+  client: "pg" | "mysql2" | "better-sqlite3" | "sqlite3";
   connection: string | object;
   pool?: {
     min?: number;
@@ -23,14 +23,16 @@ export function loadDatabaseConfig(appConfig: AppDatabaseConfig): void {
 }
 
 export function getConnection(name?: string): Knex {
-  const connectionName = name || config?.default || 'sqlite';
-  
+  const connectionName = name || config?.default || "sqlite";
+
   if (connections.has(connectionName)) {
     return connections.get(connectionName)!;
   }
 
   if (!config || !config.connections[connectionName]) {
-    throw new Error(`Connection '${connectionName}' not defined in database config`);
+    throw new Error(
+      `Connection '${connectionName}' not defined in database config`,
+    );
   }
 
   const dbConfig = config.connections[connectionName];

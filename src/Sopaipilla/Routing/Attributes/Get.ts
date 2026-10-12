@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import "reflect-metadata";
 
 export interface RouteInfo {
   path: string;
@@ -16,8 +16,12 @@ export function getRouteFromMethod(methodFn: Function): RouteInfo | undefined {
 }
 
 export function Get(path: string): MethodDecorator {
-  return (target: any, _propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
-    setRouteOnMethod(target, { path, method: 'GET' });
+  return (
+    target: any,
+    _propertyKey: string | symbol,
+    descriptor: PropertyDescriptor,
+  ) => {
+    setRouteOnMethod(target, { path, method: "GET" });
     return descriptor;
   };
 }

@@ -1,5 +1,5 @@
-import { Knex } from 'knex';
-import { getConnection } from './Connection.js';
+import { Knex } from "knex";
+import { getConnection } from "./Connection.js";
 
 export interface ModelSchema {
   table: string;
@@ -10,9 +10,9 @@ export interface ModelSchema {
 }
 
 export abstract class Model {
-  protected static table: string = '';
-  protected static primaryKey: string = 'id';
-  protected static connection: string = '';
+  protected static table: string = "";
+  protected static primaryKey: string = "id";
+  protected static connection: string = "";
   protected static fillable: string[] = [];
   protected static schema: string[] = [];
 
@@ -21,18 +21,20 @@ export abstract class Model {
       return this.table;
     }
     const className = this.constructor.name;
-    return className.replace(/Model$/, '').toLowerCase() + 's';
+    return className.replace(/Model$/, "").toLowerCase() + "s";
   }
 
   protected static get connectionName(): string {
-    return this.connection || '';
+    return this.connection || "";
   }
 
   protected static knex(): Knex {
     return getConnection(this.connectionName);
   }
 
-  protected static filterFillable(data: Record<string, any>): Record<string, any> {
+  protected static filterFillable(
+    data: Record<string, any>,
+  ): Record<string, any> {
     if (this.fillable.length === 0) {
       return data;
     }
@@ -52,13 +54,13 @@ export abstract class Model {
 
     const hasTable = await this.knex().schema.hasTable(this.tableName);
     if (!hasTable) {
-      const columns = this.schema.join(', ');
+      const columns = this.schema.join(", ");
       await this.knex().raw(`CREATE TABLE ${this.tableName} (${columns})`);
     }
   }
 
   public static async all(): Promise<any[]> {
-    return this.knex()(this.tableName).select('*');
+    return this.knex()(this.tableName).select("*");
   }
 
   public static async find(id: number | string): Promise<any | null> {
@@ -74,9 +76,12 @@ export abstract class Model {
     return this.find(id);
   }
 
-  public static async update(id: number | string, data: Record<string, any>): Promise<any | null> {
+  public static async update(
+    id: number | string,
+    data: Record<string, any>,
+  ): Promise<any | null> {
     const filtered = this.filterFillable(data);
-    
+
     if (Object.keys(filtered).length === 0) {
       return this.find(id);
     }
@@ -98,14 +103,14 @@ export abstract class Model {
   public static async where(
     column: string,
     value: any,
-    single: boolean = false
+    single: boolean = false,
   ): Promise<any[] | any | null> {
     const query = this.knex()(this.tableName).where(column, value);
-    
+
     if (single) {
       return query.first();
     }
-    
+
     return query;
   }
 }

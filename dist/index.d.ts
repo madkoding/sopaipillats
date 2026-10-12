@@ -1,2 +1,2 @@
-export * from './Sopaipilla/index.js';
+export * from "./Sopaipilla/index.js";
 //# sourceMappingURL=index.d.ts.map

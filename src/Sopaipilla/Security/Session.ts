@@ -1,8 +1,11 @@
-import { Request, Response } from 'express';
-import { randomBytes } from 'crypto';
+import { Request, Response } from "express";
+import { randomBytes } from "crypto";
 
-const SESSION_STORE = new Map<string, { data: Record<string, any>; expires: number }>();
-const SESSION_COOKIE_NAME = 'sopaipilla_sid';
+const SESSION_STORE = new Map<
+  string,
+  { data: Record<string, any>; expires: number }
+>();
+const SESSION_COOKIE_NAME = "sopaipilla_sid";
 const DEFAULT_MAX_AGE = 24 * 60 * 60 * 1000;
 
 export class Session {
@@ -23,7 +26,7 @@ export class Session {
     if (cookieHeader) {
       const cookies = this.parseCookies(cookieHeader);
       const sessionId = cookies[SESSION_COOKIE_NAME];
-      
+
       if (sessionId && SESSION_STORE.has(sessionId)) {
         const session = SESSION_STORE.get(sessionId)!;
         if (session.expires > Date.now()) {
@@ -36,17 +39,17 @@ export class Session {
     }
 
     if (!this.sessionId) {
-      this.sessionId = randomBytes(32).toString('hex');
+      this.sessionId = randomBytes(32).toString("hex");
       this.setCookie();
     }
   }
 
   private parseCookies(cookieHeader: string): Record<string, string> {
     const cookies: Record<string, string> = {};
-    cookieHeader.split(';').forEach((cookie) => {
-      const [name, ...rest] = cookie.split('=');
+    cookieHeader.split(";").forEach((cookie) => {
+      const [name, ...rest] = cookie.split("=");
       if (name && rest.length > 0) {
-        cookies[name.trim()] = rest.join('=').trim();
+        cookies[name.trim()] = rest.join("=").trim();
       }
     });
     return cookies;
@@ -54,11 +57,11 @@ export class Session {
 
   private setCookie(maxAge: number = DEFAULT_MAX_AGE): void {
     const expires = new Date(Date.now() + maxAge).toUTCString();
-    const isSecure = this.req.protocol === 'https';
-    
+    const isSecure = this.req.protocol === "https";
+
     this.res.setHeader(
-      'Set-Cookie',
-      `${SESSION_COOKIE_NAME}=${this.sessionId}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Expires=${expires}`
+      "Set-Cookie",
+      `${SESSION_COOKIE_NAME}=${this.sessionId}; Path=/; HttpOnly; SameSite=Lax${isSecure ? "; Secure" : ""}; Expires=${expires}`,
     );
   }
 
@@ -104,7 +107,7 @@ export class Session {
     if (this.sessionId) {
       SESSION_STORE.delete(this.sessionId);
     }
-    this.sessionId = randomBytes(32).toString('hex');
+    this.sessionId = randomBytes(32).toString("hex");
     this.data = {};
     this.dirty = true;
     this.setCookie();
